@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+import winsound
 import random
 
 Jokes = [
@@ -46,6 +47,9 @@ Jokes = [
 current_joke = ""
 current_answer = ""
 
+def play_sound():
+    winsound.PlaySound(r"AlexaJokes\frog_laughing_-_sound_effect.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
+
 def tell_joke():
     global current_joke, current_answer
 
@@ -69,10 +73,14 @@ def reveal_joke():
     else:
         joke_text.set("No answer available.")
 
+    play_sound()
+
 root = Tk()
 root.title("Alexa, Tell me a Joke")
 root.geometry("800x500")
 root.config(bg="#7289DA")
+
+root.iconbitmap("AlexaJokes\AJ.ico")
 
 #Text above the buttons
 joke_text = StringVar() 
