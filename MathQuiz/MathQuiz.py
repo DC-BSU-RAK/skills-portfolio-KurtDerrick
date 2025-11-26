@@ -33,7 +33,39 @@ def startQuiz(difficulty):
     title_label.pack_forget()
     button_frame.pack_forget()
 
+    instructions_button.pack_forget()
+
     displayQuestion()
+
+def displayInstructions():
+    # Hide main menu widgets
+    title_label.pack_forget()
+    button_frame.pack_forget()
+    instructions_button.pack_forget()
+
+    instructions_label.config(text=
+        " HOW TO PLAY THE MATH QUIZ \n\n"
+        "1. Choose a difficulty level.\n"
+        "2. You will be asked 10 math questions.\n"
+        "3. You have 3 attempts per question:\n"
+        "   - 1st try = +10 points\n"
+        "   - 2nd try = +5 points\n"
+        "   - 3rd try = +3 points\n"
+        "4. If all attempts are used, the answer is shown.\n"
+        "5. Your total score and grade are shown at the end.\n\n"
+        "Good luck and have fun! 👍"
+    )
+
+    instructions_label.pack(pady=20)
+    back_button.pack(pady=10)
+
+def backToMenu():
+    instructions_label.pack_forget()
+    back_button.pack_forget()
+
+    title_label.pack(pady=50)
+    button_frame.pack(pady=20)
+    instructions_button.pack(pady=10)
 
 def displayQuestion():
     global n1, n2, problem, correct_answer, attempts
@@ -42,6 +74,10 @@ def displayQuestion():
 
     correct_answer = n1 + n2 if problem == "+" else n1 - n2
     attempts = 0
+
+    # Question numbers
+    question_number_label.config(text=f"Question {question_count + 1}/10")
+    question_number_label.pack(pady=5)
 
     question_label.config(text=f"What is {n1} {problem} {n2} = ?")
     result_label.config(text="")
@@ -68,13 +104,13 @@ def submitAnswer():
         else:
             score += 3
 
-        result_label.config(text=f"✅ Correct! Score: {score}", fg="green")
+        result_label.config(text=f"✅ Correct! Score: {score}", fg="cyan")
         question_count += 1
         root.after(1500, nextQuestion)  # Move to next question after delay
     else:
         attempts += 1
         if attempts < 3:
-            result_label.config(text=f"❌ Wrong! Try again ({3 - attempts} left)", fg="red")
+            result_label.config(text=f"❌ Wrong! Try again ({3 - attempts} left)", fg="yellow")
             answer_entry.delete(0, END)
         else:
             result_label.config(text=f"❌ Out of attempts! The answer was {correct_answer}", fg="orange")
@@ -121,18 +157,25 @@ def displayResults():
 def displayAfterResult():
     result_label.pack_forget()
     play_again_button.pack_forget()
+    question_number_label.pack_forget()
 
     title_label.pack(pady=50)
     button_frame.pack(pady=20)
+    instructions_button.pack(pady=10)
 
 root = Tk()
 root.title("Math Quiz")
 root.geometry("600x500")
 root.config(bg="#2270ee")
 
+root.iconbitmap("MathQuiz\MQ.ico")
+
 # Tittle Menu
 title_label = Label(root, text="MATH QUIZ", font=("Lexend", 20, "bold"), bg="green", fg="white")
 title_label.pack(pady=50)
+
+# Instruction lbl
+instructions_label = Label(root, text="", font=("Lexend", 14), bg="white", wraplength=500, justify="left")
 
 # I asked help from AI to align the difficuly buttons and suggested using .grid instead of .pack
 # Difficulty Buttons (centered)
@@ -149,11 +192,17 @@ b2.grid(row=0, column=1, padx=20, pady=10)
 b3 = Button(button_frame, text="Advance", font=("Lexend", 14), fg="black", bg="yellow", width=12, height=2, command=lambda: startQuiz("Hard"))
 b3.grid(row=0, column=2, padx=20, pady=10)
 
+instructions_button = Button(root, text="Instructions", font=("Lexend", 14), fg="white", bg="#444", width=14, height=2, command=displayInstructions)
+instructions_button.pack(pady=10)
+
+back_button = Button(root, text="Back", font=("Lexend", 14), bg="white", command=backToMenu)
+
 # Center the frame itself
 button_frame.pack(anchor="center")
 
 # Note I had difficulties on finding out why my answer won't submit, hence why used ai to figure what part of the code is wrong
 question_label = Label(root, text="", font=("Lexend", 18), bg="white")
+question_number_label = Label(root, text="", font=("Lexend", 14), bg="#2270ee", fg="white")
 answer_entry = Entry(root, font=("Lexend", 18))
 submit_button = Button(root, text="Submit", font=("Lexend", 18), bg="white", command=submitAnswer)
 result_label = Label(root, text="", font=("Lexend", 16), bg="#2270ee")
